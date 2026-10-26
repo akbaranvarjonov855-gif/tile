@@ -1,0 +1,478 @@
+/* ==========================================================================
+   F.M. Master Tiles — stillar
+   Mundarija:
+   1. O'zgaruvchilar (ranglar)
+   2. Umumiy sozlamalar
+   3. Hero (tepa qism)
+   4. Tugmalar
+   5. Bo'limlar
+   6. Xizmatlar (ochiladigan kartalar)
+   7. Ish tartibi
+   8. Aloqa
+   9. Animatsiyalar
+   10. Animatsiyani cheklash (qulaylik uchun)
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. O'zgaruvchilar
+   Ranglarni faqat shu yerdan o'zgartirsangiz, butun sayt o'zgaradi.
+   ========================================================================== */
+
+:root {
+  /* Asosiy ranglar */
+  --color-red: #a3121f;
+  --color-red-dark: #6d0a14;
+  --color-gold: #d9a93a;
+  --color-gold-light: #f6dc8c;
+
+  /* Yorug' rejim */
+  --color-bg: #f7f0e2;
+  --color-card: #fffaf0;
+  --color-text: #2a0d10;
+  --color-muted: #6e5557;
+  --color-border: #e3cf9e;
+
+  /* Shriftlar */
+  --font-heading: "Playfair Display", Georgia, serif;
+  --font-body: "Manrope", system-ui, sans-serif;
+
+  /* Telefon "chuqurchalari" uchun xavfsiz joy */
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Qorong'i rejim (telefon sozlamasiga qarab avtomatik) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-red: #c2202e;
+    --color-bg: #190a0c;
+    --color-card: #2a1014;
+    --color-text: #f8ecd2;
+    --color-muted: #c4a9a0;
+    --color-border: #5a2c2f;
+  }
+}
+
+
+/* ==========================================================================
+   2. Umumiy sozlamalar
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: env(safe-area-inset-top, 0px);
+}
+
+body {
+  margin: 0;
+  overflow-x: hidden;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: 400 16px/1.55 var(--font-body);
+}
+
+h1,
+h2 {
+  font-family: var(--font-heading);
+}
+
+a:focus-visible,
+summary:focus-visible {
+  outline: 3px solid var(--color-gold);
+  outline-offset: 3px;
+}
+
+.page {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 16px 16px 56px;
+}
+
+
+/* ==========================================================================
+   3. Hero (tepa qism)
+   ========================================================================== */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: 56px 22px 44px;
+  border-radius: 14px;
+  text-align: center;
+  color: #fff;
+  background: radial-gradient(120% 90% at 50% 0%, var(--color-red) 0%, var(--color-red-dark) 70%);
+  box-shadow: 0 14px 40px -14px rgba(109, 10, 20, 0.7);
+}
+
+/* Kafel katakchalari (fon) */
+.hero__grid {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-auto-rows: 1fr;
+}
+
+.hero__grid i {
+  border: 1px solid rgba(246, 220, 140, 0.28);
+  opacity: 0;
+  transform: rotateY(90deg) scale(0.6);
+  animation: tile-flip 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation-delay: calc(var(--order) * 45ms);
+}
+
+/* Matnlar katakchalar ustida turishi uchun */
+.hero__badge,
+.hero__title,
+.hero__text {
+  position: relative;
+}
+
+.hero__badge {
+  display: inline-block;
+  padding: 5px 14px;
+  border: 1px solid var(--color-gold);
+  border-radius: 99px;
+  color: var(--color-gold-light);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  animation: rise 0.8s 0.9s both;
+}
+
+.hero__title {
+  margin: 16px 0 10px;
+  font-size: clamp(2.3rem, 11vw, 3.3rem);
+  font-weight: 900;
+  line-height: 1.05;
+
+  /* Oltin gradient yozuv */
+  background: linear-gradient(100deg, var(--color-gold) 20%, #fff6cf 45%, var(--color-gold) 70%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+  animation:
+    rise 0.9s 1s both,
+    shine 3.5s 2s linear infinite;
+}
+
+.hero__text {
+  max-width: 30ch;
+  margin: 0 auto;
+  color: #f6e4dc;
+  animation: rise 0.8s 1.2s both;
+}
+
+
+/* ==========================================================================
+   4. Tugmalar
+   ========================================================================== */
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 18px 0 34px;
+}
+
+.button {
+  flex: 1 1 150px;
+  padding: 15px 16px;
+  border-radius: 10px;
+  text-align: center;
+  text-decoration: none;
+  font-weight: 800;
+  transition: transform 0.2s;
+}
+
+.button:active {
+  transform: scale(0.96);
+}
+
+.button--gold {
+  background: linear-gradient(135deg, var(--color-gold-light), var(--color-gold));
+  color: #3a1206;
+  animation: pulse 2.6s 2.5s infinite;
+}
+
+.button--red {
+  background: var(--color-red);
+  color: #fff;
+}
+
+
+/* ==========================================================================
+   5. Bo'limlar
+   ========================================================================== */
+
+.section {
+  margin-bottom: 36px;
+}
+
+.section__title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 14px;
+  font-size: 1.7rem;
+  font-weight: 700;
+}
+
+/* Sarlavha yonidagi oltin chiziq */
+.section__title::after {
+  content: "";
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-gold), transparent);
+}
+
+/* Aylantirganda paydo bo'lish (script.js qo'shadi: .is-visible) */
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.7s, transform 0.7s;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+
+/* ==========================================================================
+   6. Xizmatlar (ochiladigan kartalar)
+   ========================================================================== */
+
+.service {
+  margin-bottom: 10px;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-left: 5px solid var(--color-red);
+  border-radius: 10px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.service[open] {
+  border-left-color: var(--color-gold);
+  box-shadow: 0 10px 26px -14px rgba(163, 18, 31, 0.5);
+}
+
+.service__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+  list-style: none;
+  cursor: pointer;
+}
+
+.service__header::-webkit-details-marker {
+  display: none;
+}
+
+/* "+" belgisi, ochilganda aylanadi */
+.service__header::after {
+  content: "+";
+  color: var(--color-gold);
+  font-size: 1.5rem;
+  transition: transform 0.3s;
+}
+
+.service[open] .service__header::after {
+  transform: rotate(135deg);
+}
+
+.service__name {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.service__price {
+  display: block;
+  color: var(--color-red);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.service__text {
+  margin: 0;
+  padding: 0 16px 16px;
+  color: var(--color-muted);
+  animation: rise 0.4s both;
+}
+
+
+/* ==========================================================================
+   7. Ish tartibi
+   ========================================================================== */
+
+.steps {
+  position: relative;
+  margin: 0;
+  padding: 0 0 0 20px;
+  list-style: none;
+}
+
+/* Vertikal chiziq */
+.steps::before {
+  content: "";
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 5px;
+  width: 2px;
+  background: linear-gradient(var(--color-red), var(--color-gold));
+}
+
+.steps__item {
+  position: relative;
+  padding: 0 0 18px 16px;
+}
+
+/* Romb shaklidagi nuqta */
+.steps__item::before {
+  content: "";
+  position: absolute;
+  top: 5px;
+  left: -21px;
+  width: 12px;
+  height: 12px;
+  background: var(--color-gold);
+  border: 2px solid var(--color-red);
+  transform: rotate(45deg);
+}
+
+.steps__title {
+  display: block;
+}
+
+.steps__text {
+  color: var(--color-muted);
+}
+
+
+/* ==========================================================================
+   8. Aloqa
+   ========================================================================== */
+
+.contact {
+  padding: 24px;
+  color: #fff;
+  background: linear-gradient(160deg, var(--color-red), var(--color-red-dark));
+  border: 1px solid var(--color-gold);
+  border-radius: 14px;
+}
+
+.contact .section__title {
+  color: var(--color-gold-light);
+}
+
+.contact .section__title::after {
+  display: none;
+}
+
+.contact__text {
+  margin: 0 0 12px;
+  color: #f6e4dc;
+}
+
+.contact__link {
+  display: block;
+  padding: 12px 0;
+  border-top: 1px solid rgba(246, 220, 140, 0.35);
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+  transition: padding 0.25s, color 0.25s;
+}
+
+.contact__link:hover {
+  padding-left: 8px;
+  color: var(--color-gold-light);
+}
+
+.footer {
+  margin-top: 22px;
+  text-align: center;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
+
+/* ==========================================================================
+   9. Animatsiyalar
+   ========================================================================== */
+
+/* Katakcha ag'darilib chiqadi */
+@keyframes tile-flip {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Pastdan yuqoriga silliq chiqish */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Oltin yaltirash */
+@keyframes shine {
+  to {
+    background-position: -220% 0;
+  }
+}
+
+/* Tugma atrofidagi to'lqin */
+@keyframes pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(217, 169, 58, 0.55);
+  }
+  60% {
+    box-shadow: 0 0 0 12px rgba(217, 169, 58, 0);
+  }
+}
+
+
+/* ==========================================================================
+   10. Animatsiyani cheklash
+   Telefonda "harakatni kamaytirish" yoqilgan bo'lsa, animatsiyalar o'chadi.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .hero__grid i,
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  .hero__title {
+    color: var(--color-gold);
+  }
+}
